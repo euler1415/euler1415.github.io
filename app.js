@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Chat Room with Backend Persistence ---
 
-    function getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    // function getRandomInt(min, max) {
+    //   min = Math.ceil(min);
+    //   max = Math.floor(max);
+    //   return Math.floor(Math.random() * (max - min + 1)) + min;
+    // }
 
     // Helper function to display a message
     function displayMessage(user, message, timestamp) {
@@ -74,18 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
             mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
             displayMessage('System', 'Chat connected.');
             
-            displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
-                          Date.now() - 3600 * 3 - getRandomInt(900, 1800)
-                          );
-            displayMessage('Gauss430', 'wut is this',
-                          Date.now() - 3600 * 2 - getRandomInt(900, 1800)
-                          );
-            displayMessage('euler1415', 'This is MY website.',
-                          Date.now() - 3600 * 1 - getRandomInt(900, 1800)
-                          );
-            displayMessage('euler1415', 'This chat might not work sometimes.',
-                          Date.now() - getRandomInt(900, 1800)
-                          );
+            // displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
+            //               Date.now() - 3600 * 3 - getRandomInt(900, 1800)
+            //               );
+            // displayMessage('Gauss430', 'wut is this',
+            //               Date.now() - 3600 * 2 - getRandomInt(900, 1800)
+            //               );
+            // displayMessage('euler1415', 'This is MY website.',
+            //               Date.now() - 3600 * 1 - getRandomInt(900, 1800)
+            //               );
+            // displayMessage('euler1415', 'This chat might not work sometimes.',
+            //               Date.now() - getRandomInt(900, 1800)
+            //               );
             // --- END SIMULATION ---
 
         } catch (error) {
