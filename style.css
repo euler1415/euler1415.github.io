@@ -1,5 +1,5 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Montserrat Alternates', sans-serif; /* Changed font */
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
@@ -57,7 +57,7 @@ main {
     background-color: #4cae4c;
 }
 
-footer {
+footer { /* Note: You had a footer style but no footer element in your HTML. It will apply if you add a <footer>. */
     text-align: center;
     padding: 10px;
     background-color: #333;
@@ -65,4 +65,15 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+/* CSS for blinking animation */
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink-css {
+  animation: blinker 1s linear infinite;
 }
