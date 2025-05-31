@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Awesome Website:)</title>
+    <title>My Awesome Website</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Welcome to My Website! Let's hope that I get a lot of views!!!</h1>
+        <h1>Welcome to My Site! I hope I get a lot of views!!!</h1>
         <p>Website Views: <span id="view-count">Loading...</span></p>
     </header>
 
     <main>
-        
+        <section id="content">
+            <p>This is the main content of the website.</p>
+            <p>Here you can write more about your site, its purpose, etc.</p>
+        </section>
 
+        <section id="important-links">
+            <h2>Links that I guess that I am advertising</h2>
+            <ul>
+                <li><a href="https://dashboard.blooket.com/set/6835caa7b7e9c50772e0ed77" target="This thingy">Visit https://dashboard.blooket.com/set/6835caa7b7e9c50772e0ed77</a></li>
+                <li><a href="https://artofproblemsolving.com/community/user/1130504" target="This other thingy">Check out Another Link</a></li>
+                </ul>
+        </section>
         <section id="chat-room">
             <h2>Chat Room</h2>
             <div id="chat-messages">
@@ -25,9 +35,11 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 euler1415's Website</p>
+        <p>&copy; 2025 My Website</p>
     </footer>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="app.js"></script>
-    </body>
+</body>
 </html>
