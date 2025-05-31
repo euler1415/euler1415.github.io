@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // { user: "AnotherUser", text: "Hello from the past!", timestamp: Date.now() - 50000 }
             ];
             mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
-            displayMessage('System', 'Chat connected. Previous messages would load here.');
+            displayMessage('System', 'Chat connected.');
             // --- END SIMULATION ---
 
         } catch (error) {
