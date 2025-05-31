@@ -37,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Chat Room with Backend Persistence ---
 
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     // Helper function to display a message
     function displayMessage(user, message, timestamp) {
         const messageElement = document.createElement('div');
@@ -67,10 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
             mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
             displayMessage('System', 'Chat connected.');
-            displayMessage('[2:55:15 PM]','euler1415', 'Hello, I hope you have a lot of fun on this website!!!');
-            displayMessage('[3:42:17 PM]','Gauss430', 'wut is this');
-            displayMessage('[4:21:09 PM]','euler1415', 'This is MY website.');
-            displayMessage('[7:34:20 PM]''euler1415', 'This chat might not work sometimes.');
+            displayMessage(Date.now() - 3600 * 3 - getRandomInt(900, 1800), 'euler1415', 'Hello, I hope you have a lot of fun on this website!!!');
+            displayMessage(Date.now() - 3600 * 2 - getRandomInt(900, 1800),'Gauss430', 'wut is this');
+            displayMessage(Date.now() - 3600 * 1 - getRandomInt(900, 1800),'euler1415', 'This is MY website.');
+            displayMessage(Date.now() - getRandomInt(900, 1800), 'euler1415', 'This chat might not work sometimes.');
             // --- END SIMULATION ---
 
         } catch (error) {
