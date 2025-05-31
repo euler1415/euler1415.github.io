@@ -1,3 +1,52 @@
+
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyDPN5czgwm9NPwVG2yu_KNKk63Ggqko5uc",
+    authDomain: "webpage-ccd22.firebaseapp.com",
+    projectId: "webpage-ccd22",
+    storageBucket: "webpage-ccd22.firebasestorage.app",
+    messagingSenderId: "211531738009",
+    appId: "1:211531738009:web:bbc8179a4b43770976c108",
+    measurementId: "G-FQQ0R01TDZ"
+};
+
+// Initialize Firebase
+console.log(firebaseConfig)
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+// 1. Import the necessary Firestore functions
+const db = app.firestore();
+console.log(`db ${db}`)
+
+// 4. Function to write a new message
+async function writeNewMessage(username, messageText) {
+    try {
+        // Specify the collection where you want to add the document
+        const messagesCollection = collection(db, "messages"); // We'll use 'messages' as the collection name
+
+        // Add a new document to the 'messages' collection
+        const docRef = await addDoc(messagesCollection, {
+            text: messageText, // The content of the message
+            timestamp: serverTimestamp(), // Use a server timestamp for consistency
+            username: username,
+        });
+
+        console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
+}
+
+writeNewMessage('You', 'A message')
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const viewCountElement = document.getElementById('view-count');
     const chatMessagesElement = document.getElementById('chat-messages');
@@ -37,11 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Chat Room with Backend Persistence ---
 
-    // function getRandomInt(min, max) {
-    //   min = Math.ceil(min);
-    //   max = Math.floor(max);
-    //   return Math.floor(Math.random() * (max - min + 1)) + min;
-    // }
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     // Helper function to display a message
     function displayMessage(user, message, timestamp) {
@@ -51,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessagesElement.appendChild(messageElement);
         chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
     }
+
 
     // **1. Connect to your chat backend (e.g., using Socket.IO or Firebase)**
     // Example using a hypothetical Socket.IO client:
@@ -74,18 +124,18 @@ document.addEventListener('DOMContentLoaded', () => {
             mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
             displayMessage('System', 'Chat connected.');
             
-            // displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
-            //               Date.now() - 3600 * 3 - getRandomInt(900, 1800)
-            //               );
-            // displayMessage('Gauss430', 'wut is this',
-            //               Date.now() - 3600 * 2 - getRandomInt(900, 1800)
-            //               );
-            // displayMessage('euler1415', 'This is MY website.',
-            //               Date.now() - 3600 * 1 - getRandomInt(900, 1800)
-            //               );
-            // displayMessage('euler1415', 'This chat might not work sometimes.',
-            //               Date.now() - getRandomInt(900, 1800)
-            //               );
+            displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
+                          Date.now() - 3600 * 3 - getRandomInt(900, 1800)
+                          );
+            displayMessage('Gauss430', 'wut is this',
+                          Date.now() - 3600 * 2 - getRandomInt(900, 1800)
+                          );
+            displayMessage('euler1415', 'This is MY website.',
+                          Date.now() - 3600 * 1 - getRandomInt(900, 1800)
+                          );
+            displayMessage('euler1415', 'This chat might not work sometimes.',
+                          Date.now() - getRandomInt(900, 1800)
+                          );
             // --- END SIMULATION ---
 
         } catch (error) {
@@ -127,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- SIMULATED SENDING (Replace with actual emit/POST) ---
             console.log("Simulating sending message:", messageData);
             displayMessage('You', messageText, Date.now()); // Optimistic update (display your own message immediately)
+            writeNewMessage('You', messageText);
             // In a real app, you might wait for server confirmation or handle it differently
             // --- END SIMULATION ---
 
