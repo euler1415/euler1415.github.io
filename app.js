@@ -73,10 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
             mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
             displayMessage('System', 'Chat connected.');
-            displayMessage(Date.now() - 3600 * 3 - getRandomInt(900, 1800), 'euler1415', 'Hello, I hope you have a lot of fun on this website!!!');
-            displayMessage(Date.now() - 3600 * 2 - getRandomInt(900, 1800),'Gauss430', 'wut is this');
-            displayMessage(Date.now() - 3600 * 1 - getRandomInt(900, 1800),'euler1415', 'This is MY website.');
-            displayMessage(Date.now() - getRandomInt(900, 1800), 'euler1415', 'This chat might not work sometimes.');
+            
+            displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
+                          Date.now() - 3600 * 3 - getRandomInt(900, 1800)
+                          );
+            displayMessage('Gauss430', 'wut is this',
+                          Date.now() - 3600 * 2 - getRandomInt(900, 1800)
+                          );
+            displayMessage('euler1415', 'This is MY website.',
+                          Date.now() - 3600 * 1 - getRandomInt(900, 1800)
+                          );
+            displayMessage('euler1415', 'This chat might not work sometimes.',
+                          Date.now() - getRandomInt(900, 1800)
+                          );
             // --- END SIMULATION ---
 
         } catch (error) {
