@@ -54,7 +54,7 @@ main {
 }
 
 #send-button:hover {
-    background-color: #4cae4c;
+    background-color: #039dff;
 }
 
 footer { /* Note: You had a footer style but no footer element in your HTML. It will apply if you add a <footer>. */
