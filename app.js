@@ -4,63 +4,114 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatInputElement = document.getElementById('chat-input');
     const sendButtonElement = document.getElementById('send-button');
 
-    // --- View Counter (Conceptual) ---
-    // This would typically involve a fetch request to your backend
-    // or initialization of a service like Firebase.
-
-    // Example: Fetching view count from a hypothetical backend
+    // --- View Counter (Still needs a backend to be truly persistent and accurate) ---
     async function fetchAndUpdateViewCount() {
         try {
-            // Replace with your actual API endpoint for getting views
+            // For a real counter:
+            // 1. On page load, your JS could call an endpoint like '/api/increment-view'
+            // await fetch('/api/increment-view', { method: 'POST' });
+
+            // 2. Then fetch the total count
             // const response = await fetch('/api/get-views');
             // const data = await response.json();
             // viewCountElement.textContent = data.views;
 
-            // Placeholder for demonstration:
-            // In a real scenario, you'd also have an endpoint to *increment* views
-            // that you call once per new visitor session.
-            // For now, let's simulate it.
+            // Using localStorage for a simple, non-shared demo:
             let currentViews = localStorage.getItem('simulatedViews');
-            if (currentViews === null) {
-                currentViews = 1;
+            if (!sessionStorage.getItem('viewIncremented')) { // Increment once per session
+                currentViews = currentViews ? parseInt(currentViews) + 1 : 1;
+                localStorage.setItem('simulatedViews', currentViews);
+                sessionStorage.setItem('viewIncremented', 'true');
             } else {
-                currentViews = parseInt(currentViews) + 1;
+                currentViews = currentViews ? parseInt(currentViews) : 0;
             }
-            localStorage.setItem('simulatedViews', currentViews);
-            viewCountElement.textContent = currentViews;
+            viewCountElement.textContent = currentViews || '0';
 
         } catch (error) {
-            console.error('Error fetching view count:', error);
+            console.error('Error with view count:', error);
             viewCountElement.textContent = 'Error';
         }
     }
-    // Call this when the page loads
     fetchAndUpdateViewCount();
 
 
-    // --- Chat Room (Conceptual) ---
-    // This would involve setting up a WebSocket connection (e.g., with Socket.IO)
-    // or using a service like Firebase Realtime Database.
+    // --- Chat Room with Backend Persistence ---
 
-    // Example: Adding a new message to the chat (frontend only)
-    function addMessageToChat(user, message) {
+    // Helper function to display a message
+    function displayMessage(user, message, timestamp) {
         const messageElement = document.createElement('div');
-        messageElement.innerHTML = `<strong>${user}:</strong> ${message}`;
+        const timeString = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
+        messageElement.innerHTML = `${timeString ? `<span class="timestamp">[${timeString}]</span> ` : ''}<strong>${user}:</strong> ${message}`;
         chatMessagesElement.appendChild(messageElement);
-        chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight; // Scroll to bottom
+        chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
     }
 
-    // Example: Sending a message (frontend only, no actual sending to others)
+    // **1. Connect to your chat backend (e.g., using Socket.IO or Firebase)**
+    // Example using a hypothetical Socket.IO client:
+    // const socket = io(); // This would connect to your Socket.IO server
+
+    // **2. Load existing messages when the page loads**
+    async function loadInitialMessages() {
+        try {
+            // Using Fetch API to get messages from your backend
+            // const response = await fetch('/api/chat/messages');
+            // const messages = await response.json(); // Assuming server returns an array of messages
+            // messages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
+
+            // --- SIMULATED FOR DEMO (Replace with actual fetch) ---
+            console.log("Simulating fetching initial messages...");
+            // In a real app, these would come from your server/database
+            const mockMessages = [
+                // { user: "OldUser", text: "This is an older message.", timestamp: Date.now() - 100000 },
+                // { user: "AnotherUser", text: "Hello from the past!", timestamp: Date.now() - 50000 }
+            ];
+            mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
+            displayMessage('System', 'Chat connected. Previous messages would load here.');
+            // --- END SIMULATION ---
+
+        } catch (error) {
+            console.error("Error loading initial messages:", error);
+            displayMessage('System', 'Could not load previous messages.');
+        }
+    }
+
+    // **3. Listen for new messages from the server**
+    // Example with Socket.IO:
+    // socket.on('newMessage', (data) => { // 'newMessage' is a custom event name
+    //     displayMessage(data.user, data.text, data.timestamp);
+    // });
+
+    // --- SIMULATED INCOMING MESSAGE (Replace with actual WebSocket/listener) ---
+    function simulateIncomingMessage() {
+        setTimeout(() => {
+            // This would be triggered by your backend (e.g., Socket.IO server.emit)
+            // const randomMessage = { user: "ServerUser", text: "This is a message from the server!", timestamp: Date.now() };
+            // displayMessage(randomMessage.user, randomMessage.text, randomMessage.timestamp);
+        }, 5000);
+    }
+    // --- END SIMULATION ---
+
+
+    // **4. Send a new message**
     sendButtonElement.addEventListener('click', () => {
         const messageText = chatInputElement.value.trim();
         if (messageText) {
-            addMessageToChat('You', messageText); // Display your own message
+            const messageData = {
+                // user: "You", // The server should ideally set the user based on authentication
+                text: messageText,
+                // timestamp: Date.now() // Server should set the definitive timestamp
+            };
 
-            // In a real app, you would send this message to the server here:
-            // socket.emit('chatMessage', messageText); // Example with Socket.IO
-            // or firebase.database().ref('messages').push({ user: 'You', text: messageText });
+            // Send to server (e.g., using Socket.IO)
+            // socket.emit('sendMessage', messageData);
 
-            chatInputElement.value = ''; // Clear input
+            // --- SIMULATED SENDING (Replace with actual emit/POST) ---
+            console.log("Simulating sending message:", messageData);
+            displayMessage('You', messageText, Date.now()); // Optimistic update (display your own message immediately)
+            // In a real app, you might wait for server confirmation or handle it differently
+            // --- END SIMULATION ---
+
+            chatInputElement.value = '';
         }
     });
 
@@ -70,18 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Example: Receiving a message from the server (conceptual)
-    // This would be inside a WebSocket 'on message' event listener or Firebase listener.
-    // function onMessageReceivedFromServer(data) {
-    //     addMessageToChat(data.user, data.message);
-    // }
-
-    // --- Initialize Chat (Conceptual Placeholder) ---
-    // In a real app, you'd connect to your chat server or Firebase here.
-    addMessageToChat('System', 'Welcome to the chat!');
-    // Simulate receiving a message after a delay
-    setTimeout(() => {
-        addMessageToChat('OtherUser', 'Hello there!');
-    }, 2000);
+    // Initialize
+    loadInitialMessages();
+    // simulateIncomingMessage(); // Start listening for simulated messages
 
 });
