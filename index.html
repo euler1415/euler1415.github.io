@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>euler1415's Website</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <h1>Welcome to My Site! I hope I get a lot of views!!!</h1>
@@ -17,17 +21,30 @@
 
     <main>
         <section id="suggestions">
-            <h2>If you want to give me some suggestions for my website, then PM me, euler1415 on AoPS (user 1130504). I probably won't respond, but I will edit this website!!!</h2>
+            <h2>If you want to give me some suggestions for my website, then PM me, euler1415 on AoPS (user 1130504). I
+                probably won't respond, but I will edit this website!!!</h2>
         </section>
         <section id="important-links">
             <h2>Links that I guess that I am advertising.</h2>
             <h3><em><span class="blink-css">Shout out to AoPS and a bunch of AoPS users!!</span></em></h3>
-            
+
             <ul>
-                <span class="blink-css"><li><em><a href="https://dashboard.blooket.com/set/6835caa7b7e9c50772e0ed77" target="This thingy">Visit this Link</a></em></li></span>
-                <span class="blink-css"><li><em><a href="https://artofproblemsolving.com/community/user/1130504" target="This other thingy">Check out Another Link</a></em></li></span>
-                <span class="blink-css"><li><em><a href="https://artofproblemsolving.com/alcumus/problem" target="This other thingy">Check out Another Link</a></em></li></span>
-                <span class="blink-css"><li><em><a href="https://hmpg.net/" target="This other thingy">Check out Another Link(I know, a lot of links)</a></em></li></span>
+                <span class="blink-css">
+                    <li><em><a href="https://dashboard.blooket.com/set/6835caa7b7e9c50772e0ed77"
+                                target="This thingy">Visit this Link</a></em></li>
+                </span>
+                <span class="blink-css">
+                    <li><em><a href="https://artofproblemsolving.com/community/user/1130504"
+                                target="This other thingy">Check out Another Link</a></em></li>
+                </span>
+                <span class="blink-css">
+                    <li><em><a href="https://artofproblemsolving.com/alcumus/problem" target="This other thingy">Check
+                                out Another Link</a></em></li>
+                </span>
+                <span class="blink-css">
+                    <li><em><a href="https://hmpg.net/" target="This other thingy">Check out Another Link(I know, a lot
+                                of links)</a></em></li>
+                </span>
             </ul>
         </section>
         <section id="chat-room">
@@ -39,8 +56,207 @@
         </section>
     </main>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script src="app.js"></script>
+    // Import the functions you need from the SDKs you need
+    <!-- <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js"></script> -->
+
+    <!-- <script src="app.js"></script> -->
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js"
+        // import {} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"
+        import { serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"
+        import { Timestamp, getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js"
+
+
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDPN5czgwm9NPwVG2yu_KNKk63Ggqko5uc",
+            authDomain: "webpage-ccd22.firebaseapp.com",
+            projectId: "webpage-ccd22",
+            storageBucket: "webpage-ccd22.firebasestorage.app",
+            messagingSenderId: "211531738009",
+            appId: "1:211531738009:web:bbc8179a4b43770976c108",
+            measurementId: "G-FQQ0R01TDZ"
+        };
+
+        // Initialize Firebase
+        console.log(firebaseConfig)
+        const app = initializeApp(firebaseConfig);
+        // const analytics = getAnalytics(app);
+
+
+        // 1. Import the necessary Firestore functions
+        const db = getFirestore();
+        // console.log(`db ${db}`)
+
+        // 4. Function to write a new message
+        async function writeNewMessage(username, messageText) {
+            try {
+                // Specify the collection where you want to add the document
+                const messagesCollection = collection(db, "messages"); // We'll use 'messages' as the collection name
+
+                // Add a new document to the 'messages' collection
+                const docRef = await addDoc(messagesCollection, {
+                    text: messageText, // The content of the message
+                    timestamp: serverTimestamp(), // Use a server timestamp for consistency
+                    username: username,
+                });
+
+                console.log("Document written with ID: ", docRef.id);
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
+        }
+
+        async function readAll() {
+
+            const q = query(collection(db, "messages")
+                // , where("capital", "==", true)
+            );
+
+            const snapshot = await getDocs(q);
+            return snapshot.docs.map(doc => doc.data());
+        }
+
+        function tsToDate(ts) {
+            return ts.toString();
+            // return ts.toDate();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewCountElement = document.getElementById('view-count');
+            const chatMessagesElement = document.getElementById('chat-messages');
+            const chatInputElement = document.getElementById('chat-input');
+            const sendButtonElement = document.getElementById('send-button');
+
+            // --- View Counter (Still needs a backend to be truly persistent and accurate) ---
+            async function fetchAndUpdateViewCount() {
+                try {
+                    // For a real counter:
+                    // 1. On page load, your JS could call an endpoint like '/api/increment-view'
+                    // await fetch('/api/increment-view', { method: 'POST' });
+
+                    // 2. Then fetch the total count
+                    // const response = await fetch('/api/get-views');
+                    // const data = await response.json();
+                    // viewCountElement.textContent = data.views;
+
+                    // Using localStorage for a simple, non-shared demo:
+                    let currentViews = localStorage.getItem('simulatedViews');
+                    if (!sessionStorage.getItem('viewIncremented')) { // Increment once per session
+                        currentViews = currentViews ? parseInt(currentViews) + 1 : 1;
+                        localStorage.setItem('simulatedViews', currentViews);
+                        sessionStorage.setItem('viewIncremented', 'true');
+                    } else {
+                        currentViews = currentViews ? parseInt(currentViews) : 0;
+                    }
+                    viewCountElement.textContent = currentViews || '0';
+
+                } catch (error) {
+                    console.error('Error with view count:', error);
+                    viewCountElement.textContent = 'Error';
+                }
+            }
+            fetchAndUpdateViewCount();
+
+
+            // --- Chat Room with Backend Persistence ---
+
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            // Helper function to display a message
+            function displayMessage(user, message, timestamp) {
+                const messageElement = document.createElement('div');
+                const timeString = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
+                messageElement.innerHTML = `${timeString ? `<span class="timestamp">[${timeString}]</span> ` : ''}<strong>${user}:</strong> ${message}`;
+                chatMessagesElement.appendChild(messageElement);
+                chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+            }
+
+
+            // **1. Connect to your chat backend (e.g., using Socket.IO or Firebase)**
+            // Example using a hypothetical Socket.IO client:
+            // const socket = io(); // This would connect to your Socket.IO server
+
+            // **2. Load existing messages when the page loads**
+            async function loadInitialMessages() {
+                try {
+                    const messages = await readAll();
+                    messages.forEach(msg => {
+                        console.log(msg);
+                        console.log(tsToDate(msg.timestamp));
+                        displayMessage(msg.username, msg.text, msg.timestamp);
+                    });
+
+                    // --- END SIMULATION ---
+
+                } catch (error) {
+                    console.error("Error loading initial messages:", error);
+                    displayMessage('System', 'Could not load previous messages.');
+                }
+            }
+
+            // **3. Listen for new messages from the server**
+            // Example with Socket.IO:
+            // socket.on('newMessage', (data) => { // 'newMessage' is a custom event name
+            //     displayMessage(data.user, data.text, data.timestamp);
+            // });
+
+            // --- SIMULATED INCOMING MESSAGE (Replace with actual WebSocket/listener) ---
+            function simulateIncomingMessage() {
+                setTimeout(() => {
+                    // This would be triggered by your backend (e.g., Socket.IO server.emit)
+                    // const randomMessage = { user: "ServerUser", text: "This is a message from the server!", timestamp: Date.now() };
+                    // displayMessage(randomMessage.user, randomMessage.text, randomMessage.timestamp);
+                }, 5000);
+            }
+            // --- END SIMULATION ---
+
+
+            // **4. Send a new message**
+            sendButtonElement.addEventListener('click', () => {
+                const messageText = chatInputElement.value.trim();
+                if (messageText) {
+                    const messageData = {
+                        // user: "You", // The server should ideally set the user based on authentication
+                        text: messageText,
+                        // timestamp: Date.now() // Server should set the definitive timestamp
+                    };
+
+
+                    displayMessage('You', messageText, Date.now());
+                    writeNewMessage(user, message);
+                    
+                    chatInputElement.value = '';
+                }
+            });
+
+            chatInputElement.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    sendButtonElement.click();
+                }
+            });
+
+            // Initialize
+            loadInitialMessages();
+            // simulateIncomingMessage(); // Start listening for simulated messages
+
+        });
+
+
+    </script>
 </body>
+
 </html>
