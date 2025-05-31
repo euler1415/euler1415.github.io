@@ -67,10 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
             mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
             displayMessage('System', 'Chat connected.');
-            displayMessage('[2:55:15 PM]','euler1415', 'Hello, I hope you have a lot of fun on this website!!!');
-            displayMessage('[3:42:17 PM]','Gauss430', 'wut is this');
-            displayMessage('[4:21:09 PM]','euler1415', 'This is MY website.');
-            displayMessage('[7:34:20 PM]','euler1415', 'This chat might not work sometimes.');
+            displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!','[2:55:15 PM]');
+            displayMessage('Gauss430', 'wut is this','[3:42:17 PM]');
+            displayMessage('euler1415', 'This is MY website.','[4:21:09 PM]');
+            displayMessage('euler1415', 'This chat might not work sometimes.','[7:34:20 PM]');
             // --- END SIMULATION ---
 
         } catch (error) {
