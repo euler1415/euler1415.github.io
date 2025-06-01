@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
 </head>
 
 <body>
@@ -76,21 +77,11 @@
                 <li>The Pope can't be an organ donor.</li>
     </main>
 
-    
-    <!-- <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js"></script> -->
-
-    <!-- <script src="app.js"></script> -->
     <script type="module">
-        <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js"
-        // import {} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"
         import { serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"
         import { Timestamp, getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js"
-
-
 
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
@@ -110,12 +101,12 @@
         // Initialize Firebase
         console.log(firebaseConfig)
         const app = initializeApp(firebaseConfig);
-        // const analytics = getAnalytics(app);
+        const analytics = getAnalytics(app);
 
 
         // 1. Import the necessary Firestore functions
-        const db = getFirestore();
-        // console.log(`db ${db}`)
+        const db = getFirestore(app); // Changed to getFirestore(app)
+        console.log(`db ${db}`)
 
         // 4. Function to write a new message
         async function writeNewMessage(username, messageText) {
@@ -131,24 +122,27 @@
                 });
 
                 console.log("Document written with ID: ", docRef.id);
+                // Trigger fireworks on successful message write
+                triggerFireworks();
             } catch (e) {
                 console.error("Error adding document: ", e);
             }
         }
 
+        // Removed the standalone writeNewMessage('You', 'A message') call here
+        // as it would trigger fireworks on page load unnecessarily.
+
         async function readAll() {
-
-            const q = query(collection(db, "messages")
-                // , where("capital", "==", true)
-            );
-
+            const q = query(collection(db, "messages"));
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => doc.data());
-        }
-
-        function tsToDate(ts) {
-            return ts.toString();
-            // return ts.toDate();
+            return snapshot.docs.map(doc => {
+                const data = doc.data();
+                // Convert Firestore Timestamp to JavaScript Date object for display
+                if (data.timestamp && typeof data.timestamp.toDate === 'function') {
+                    data.timestamp = data.timestamp.toDate().getTime();
+                }
+                return data;
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -160,16 +154,6 @@
             // --- View Counter (Still needs a backend to be truly persistent and accurate) ---
             async function fetchAndUpdateViewCount() {
                 try {
-                    // For a real counter:
-                    // 1. On page load, your JS could call an endpoint like '/api/increment-view'
-                    // await fetch('/api/increment-view', { method: 'POST' });
-
-                    // 2. Then fetch the total count
-                    // const response = await fetch('/api/get-views');
-                    // const data = await response.json();
-                    // viewCountElement.textContent = data.views;
-
-                    // Using localStorage for a simple, non-shared demo:
                     let currentViews = localStorage.getItem('simulatedViews');
                     if (!sessionStorage.getItem('viewIncremented')) { // Increment once per session
                         currentViews = currentViews ? parseInt(currentViews) + 1 : 1;
@@ -186,7 +170,6 @@
                 }
             }
             fetchAndUpdateViewCount();
-
 
             // --- Chat Room with Backend Persistence ---
 
@@ -205,22 +188,14 @@
                 chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
             }
 
-
-            // **1. Connect to your chat backend (e.g., using Socket.IO or Firebase)**
-            // Example using a hypothetical Socket.IO client:
-            // const socket = io(); // This would connect to your Socket.IO server
-
-            // **2. Load existing messages when the page loads**
             async function loadInitialMessages() {
                 try {
                     const messages = await readAll();
+                    messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)); // Sort by timestamp
                     messages.forEach(msg => {
-                        console.log(msg);
-                        console.log(tsToDate(msg.timestamp));
                         displayMessage(msg.username, msg.text, msg.timestamp);
                     });
-
-                    // --- END SIMULATION ---
+                    displayMessage('System', 'Chat connected.');
 
                 } catch (error) {
                     console.error("Error loading initial messages:", error);
@@ -228,37 +203,12 @@
                 }
             }
 
-            // **3. Listen for new messages from the server**
-            // Example with Socket.IO:
-            // socket.on('newMessage', (data) => { // 'newMessage' is a custom event name
-            //     displayMessage(data.user, data.text, data.timestamp);
-            // });
-
-            // --- SIMULATED INCOMING MESSAGE (Replace with actual WebSocket/listener) ---
-            function simulateIncomingMessage() {
-                setTimeout(() => {
-                    // This would be triggered by your backend (e.g., Socket.IO server.emit)
-                    // const randomMessage = { user: "ServerUser", text: "This is a message from the server!", timestamp: Date.now() };
-                    // displayMessage(randomMessage.user, randomMessage.text, randomMessage.timestamp);
-                }, 5000);
-            }
-            // --- END SIMULATION ---
-
-
             // **4. Send a new message**
             sendButtonElement.addEventListener('click', () => {
                 const messageText = chatInputElement.value.trim();
                 if (messageText) {
-                    const messageData = {
-                        // user: "You", // The server should ideally set the user based on authentication
-                        text: messageText,
-                        // timestamp: Date.now() // Server should set the definitive timestamp
-                    };
-
-
-                    displayMessage('You', messageText, Date.now());
-                    writeNewMessage(user, message);
-                    
+                    displayMessage('You', messageText, Date.now()); // Optimistic update
+                    writeNewMessage('You', messageText); // Call writeNewMessage with fixed 'You' username
                     chatInputElement.value = '';
                 }
             });
@@ -271,11 +221,50 @@
 
             // Initialize
             loadInitialMessages();
-            // simulateIncomingMessage(); // Start listening for simulated messages
 
+            // --- Firework Animation Setup ---
+            // Create a container for the fireworks
+            const fireworksContainer = document.createElement('div');
+            fireworksContainer.id = 'fireworks-container';
+            Object.assign(fireworksContainer.style, {
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 9999, // Ensure it's on top
+                pointerEvents: 'none' // Allows clicking through the container
+            });
+            document.body.appendChild(fireworksContainer);
+
+            // Initialize fireworks after the container is in the DOM
+            const fireworks = new Fireworks.default(fireworksContainer, {
+                autoresize: true,
+                opacity: 0.5,
+                acceleration: 1.05,
+                friction: 0.97,
+                gravity: 1.5,
+                particles: 50,
+                trace: 3,
+                traceSpeed: 10,
+                explode: 5,
+                mouse: {
+                    click: false,
+                    move: false,
+                    max: 1
+                },
+                sound: {
+                    enabled: false,
+                }
+            });
+
+            function triggerFireworks() {
+                fireworks.start();
+                setTimeout(() => {
+                    fireworks.stop();
+                }, 3000); // Stop fireworks after 3 seconds
+            }
         });
-
-
     </script>
 </body>
 
