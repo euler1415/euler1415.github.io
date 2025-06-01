@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fireworks = new Fireworks.default(fireworksContainer, {
         autoresize: true,
         opacity: 0.5,
-        acceleration: 1.05,
-        friction: 0.97,
-        gravity: 1.5,
+        acceleration: 1.00,
+        friction: 0.95,
+        gravity: 1.0,
         particles: 50,
         trace: 3,
         traceSpeed: 10,
