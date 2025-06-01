@@ -1,3 +1,20 @@
+/* --- Barrel Roll Effect --- */
+.barrel-roll-effect {
+  /* This ensures that transitions apply correctly to the whole body */
+  transition: transform 0.7s ease-in-out;
+  animation: doBarrelRoll 0.7s ease-in-out forwards;
+}
+
+@keyframes doBarrelRoll {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+/* --- End Barrel Roll Effect --- */
+
 body {
     font-family: 'Montserrat Alternates', sans-serif; /* Changed font */
     margin: 0;
