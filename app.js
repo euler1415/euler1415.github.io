@@ -129,16 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage('System', 'Chat connected.');
 
             // Add the previous hardcoded messages for historical context if desired
-            displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
+            //displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
                                      Date.now() - 3600 * 3 - getRandomInt(900, 1800)
                                      );
-            displayMessage('Gauss430', 'wut is this',
+            //displayMessage('Gauss430', 'wut is this',
                                      Date.now() - 3600 * 2 - getRandomInt(900, 1800)
                                      );
-            displayMessage('euler1415', 'This is MY website.',
+            //displayMessage('euler1415', 'This is MY website.',
                                      Date.now() - 3600 * 1 - getRandomInt(900, 1800)
                                      );
-            displayMessage('euler1415', 'This chat might not work sometimes.',
+            //displayMessage('euler1415', 'This chat might not work sometimes.',
                                      Date.now() - getRandomInt(900, 1800)
                                      );
 
