@@ -153,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageText = chatInputElement.value.trim();
         if (messageText) {
             // Optimistic update: display your own message immediately
-            displayMessage('Anonymous', messageText, Date.now()); 
+            displayMessage('You', messageText, Date.now()); 
             // Send to Firestore
-            writeNewMessage('Anonymous', messageText); 
+            writeNewMessage('You', messageText); 
             chatInputElement.value = '';
         }
     });
@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fireworks = new Fireworks.default(fireworksContainer, {
         autoresize: true,
         opacity: 0.5,
-        acceleration: 1.00,
-        friction: 0.95,
-        gravity: 1.0,
+        acceleration: 1.05,
+        friction: 0.97,
+        gravity: 1.5,
         particles: 50,
         trace: 3,
         traceSpeed: 10,
