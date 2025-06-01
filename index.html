@@ -11,7 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
 </head>
 
@@ -56,6 +56,15 @@
             <input type="text" id="chat-input" placeholder="Type your message...">
             <button id="send-button">Send</button>
         </section>
+
+        <section id="guess-game-container">
+            <h2>Guess the Number!</h2>
+            <p id="guess-message">Guess a number between 1 and 20!</p>
+            <input type="number" id="guess-input" min="1" max="20" placeholder="Enter your guess">
+            <button id="guess-button">Guess</button>
+            <button id="restart-game-button" style="display:none;">Play Again</button>
+        </section>
+
         <section id="rubiks-cube">
             <h1>CFOP algorithms</h1>
             <h2>F2L algorithms</h2>
@@ -80,7 +89,7 @@
         </section>
     </main>
 
-    <script type="module" src="app.js"></script> 
+    <script type="module" src="app.js"></script>
     </body>
 
 </html>
