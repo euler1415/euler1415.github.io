@@ -1,8 +1,8 @@
 /* --- Barrel Roll Effect --- */
 .barrel-roll-effect {
   /* This ensures that transitions apply correctly to the whole body */
-  transition: transform 0.7s ease-in-out;
-  animation: doBarrelRoll 0.7s ease-in-out forwards;
+  transition: transform 2.0s ease-in-out;
+  animation: doBarrelRoll 2.0s ease-in-out forwards;
 }
 
 @keyframes doBarrelRoll {
