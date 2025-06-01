@@ -1,8 +1,11 @@
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+import { serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"; // This import is for Realtime Database's serverTimestamp.
+// For Firestore's serverTimestamp, you need to import it from firestore:
+import { Timestamp, getFirestore, collection, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyDPN5czgwm9NPwVG2yu_KNKk63Ggqko5uc",
     authDomain: "webpage-ccd22.firebaseapp.com",
@@ -16,36 +19,63 @@ const firebaseConfig = {
 // Initialize Firebase
 console.log(firebaseConfig)
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const analytics = getAnalytics(app); // Keep this if you want analytics, otherwise remove.
 
-
-// 1. Import the necessary Firestore functions
-const db = app.firestore();
+// 1. Initialize Firestore with the app instance
+const db = getFirestore(app); 
 console.log(`db ${db}`)
 
-// 4. Function to write a new message
+// Reference to the fireworks instance (will be initialized in DOMContentLoaded)
+let fireworks;
+
+// Function to trigger the fireworks animation
+function triggerFireworks() {
+    if (fireworks) { // Ensure fireworks object exists
+        fireworks.start();
+        setTimeout(() => {
+            fireworks.stop();
+        }, 3000); // Stop fireworks after 3 seconds
+    } else {
+        console.warn("Fireworks object not initialized yet.");
+    }
+}
+
+// Function to write a new message
 async function writeNewMessage(username, messageText) {
     try {
-        // Specify the collection where you want to add the document
-        const messagesCollection = collection(db, "messages"); // We'll use 'messages' as the collection name
+        const messagesCollection = collection(db, "messages");
 
-        // Add a new document to the 'messages' collection
+        // Use Firestore's FieldValue.serverTimestamp()
         const docRef = await addDoc(messagesCollection, {
-            text: messageText, // The content of the message
-            timestamp: serverTimestamp(), // Use a server timestamp for consistency
+            text: messageText,
+            timestamp: Timestamp.now(), // Using client-side timestamp for immediate display consistency
+                                       // For true server timestamp, you'd use FieldValue.serverTimestamp()
+                                       // but that requires an extra import and often a read back.
+                                       // For this demo, client-side is fine for display.
             username: username,
         });
 
         console.log("Document written with ID: ", docRef.id);
-        // Trigger fireworks on successful message write
-        triggerFireworks();
+        triggerFireworks(); // Trigger fireworks on successful message write
     } catch (e) {
         console.error("Error adding document: ", e);
     }
 }
 
-writeNewMessage('You', 'A message')
+async function readAll() {
+    const messagesCollectionRef = collection(db, "messages");
+    const q = query(messagesCollectionRef); // No need for 'where' clause for all documents
 
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Convert Firestore Timestamp to JavaScript Date object's milliseconds
+        if (data.timestamp && typeof data.timestamp.toDate === 'function') {
+            data.timestamp = data.timestamp.toDate().getTime();
+        }
+        return data;
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const viewCountElement = document.getElementById('view-count');
@@ -53,21 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatInputElement = document.getElementById('chat-input');
     const sendButtonElement = document.getElementById('send-button');
 
-    // --- View Counter (Still needs a backend to be truly persistent and accurate) ---
+    // --- View Counter ---
     async function fetchAndUpdateViewCount() {
         try {
-            // For a real counter:
-            // 1. On page load, your JS could call an endpoint like '/api/increment-view'
-            // await fetch('/api/increment-view', { method: 'POST' });
-
-            // 2. Then fetch the total count
-            // const response = await fetch('/api/get-views');
-            // const data = await response.json();
-            // viewCountElement.textContent = data.views;
-
-            // Using localStorage for a simple, non-shared demo:
             let currentViews = localStorage.getItem('simulatedViews');
-            if (!sessionStorage.getItem('viewIncremented')) { // Increment once per session
+            if (!sessionStorage.getItem('viewIncremented')) {
                 currentViews = currentViews ? parseInt(currentViews) + 1 : 1;
                 localStorage.setItem('simulatedViews', currentViews);
                 sessionStorage.setItem('viewIncremented', 'true');
@@ -75,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentViews = currentViews ? parseInt(currentViews) : 0;
             }
             viewCountElement.textContent = currentViews || '0';
-
         } catch (error) {
             console.error('Error with view count:', error);
             viewCountElement.textContent = 'Error';
@@ -83,16 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     fetchAndUpdateViewCount();
 
-
-    // --- Chat Room with Backend Persistence ---
-
+    // --- Chat Room Functions ---
     function getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // Helper function to display a message
     function displayMessage(user, message, timestamp) {
         const messageElement = document.createElement('div');
         const timeString = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
@@ -101,29 +117,18 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
     }
 
-
-    // **1. Connect to your chat backend (e.g., using Socket.IO or Firebase)**
-    // Example using a hypothetical Socket.IO client:
-    // const socket = io(); // This would connect to your Socket.IO server
-
-    // **2. Load existing messages when the page loads**
     async function loadInitialMessages() {
         try {
-            // Using Fetch API to get messages from your backend
-            // const response = await fetch('/api/chat/messages');
-            // const messages = await response.json(); // Assuming server returns an array of messages
-            // messages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
-
-            // --- SIMULATED FOR DEMO (Replace with actual fetch) ---
-            console.log("Simulating fetching initial messages...");
-            // In a real app, these would come from your server/database
-            const mockMessages = [
-                // { user: "OldUser", text: "This is an older message.", timestamp: Date.now() - 100000 },
-                // { user: "AnotherUser", text: "Hello from the past!", timestamp: Date.now() - 50000 }
-            ];
-            mockMessages.forEach(msg => displayMessage(msg.user, msg.text, msg.timestamp));
-            displayMessage('System', 'Chat connected.');
+            const messages = await readAll();
+            // Sort messages by timestamp to display them in chronological order
+            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)); 
             
+            messages.forEach(msg => {
+                displayMessage(msg.username, msg.text, msg.timestamp);
+            });
+            displayMessage('System', 'Chat connected.');
+
+            // Add the previous hardcoded messages for historical context if desired
             displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
                                      Date.now() - 3600 * 3 - getRandomInt(900, 1800)
                                      );
@@ -136,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage('euler1415', 'This chat might not work sometimes.',
                                      Date.now() - getRandomInt(900, 1800)
                                      );
-            // --- END SIMULATION ---
 
         } catch (error) {
             console.error("Error loading initial messages:", error);
@@ -144,43 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // **3. Listen for new messages from the server**
-    // Example with Socket.IO:
-    // socket.on('newMessage', (data) => { // 'newMessage' is a custom event name
-    //       displayMessage(data.user, data.text, data.timestamp);
-    // });
-
-    // --- SIMULATED INCOMING MESSAGE (Replace with actual WebSocket/listener) ---
-    function simulateIncomingMessage() {
-        setTimeout(() => {
-            // This would be triggered by your backend (e.g., Socket.IO server.emit)
-            // const randomMessage = { user: "ServerUser", text: "This is a message from the server!", timestamp: Date.now() };
-            // displayMessage(randomMessage.user, randomMessage.text, randomMessage.timestamp);
-        }, 5000);
-    }
-    // --- END SIMULATION ---
-
-
-    // **4. Send a new message**
+    // Send a new message
     sendButtonElement.addEventListener('click', () => {
         const messageText = chatInputElement.value.trim();
         if (messageText) {
-            const messageData = {
-                // user: "You", // The server should ideally set the user based on authentication
-                text: messageText,
-                // timestamp: Date.now() // Server should set the definitive timestamp
-            };
-
-            // Send to server (e.g., using Socket.IO)
-            // socket.emit('sendMessage', messageData);
-
-            // --- SIMULATED SENDING (Replace with actual emit/POST) ---
-            console.log("Simulating sending message:", messageData);
-            displayMessage('You', messageText, Date.now()); // Optimistic update (display your own message immediately)
-            writeNewMessage('You', messageText);
-            // In a real app, you might wait for server confirmation or handle it differently
-            // --- END SIMULATION ---
-
+            // Optimistic update: display your own message immediately
+            displayMessage('You', messageText, Date.now()); 
+            // Send to Firestore
+            writeNewMessage('You', messageText); 
             chatInputElement.value = '';
         }
     });
@@ -191,26 +166,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize
+    // Initialize chat and view count
     loadInitialMessages();
-    // simulateIncomingMessage(); // Start listening for simulated messages
 
     // --- Firework Animation Setup ---
-    // Create a container for the fireworks
-    const fireworksContainer = document.createElement('div');
-    fireworksContainer.id = 'fireworks-container';
-    Object.assign(fireworksContainer.style, {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 9999, // Ensure it's on top
-        pointerEvents: 'none' // Allows clicking through the container
-    });
-    document.body.appendChild(fireworksContainer);
+    // Create a container for the fireworks if it doesn't already exist
+    let fireworksContainer = document.getElementById('fireworks-container');
+    if (!fireworksContainer) {
+        fireworksContainer = document.createElement('div');
+        fireworksContainer.id = 'fireworks-container';
+        Object.assign(fireworksContainer.style, {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 9999, // Ensure it's on top
+            pointerEvents: 'none' // Allows clicking through the container
+        });
+        document.body.appendChild(fireworksContainer);
+    }
+    
 
-    const fireworks = new Fireworks.default(fireworksContainer, {
+    // Initialize fireworks after the container is in the DOM
+    fireworks = new Fireworks.default(fireworksContainer, {
         autoresize: true,
         opacity: 0.5,
         acceleration: 1.05,
@@ -230,10 +209,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function triggerFireworks() {
-        fireworks.start();
-        setTimeout(() => {
-            fireworks.stop();
-        }, 3000); // Stop fireworks after 3 seconds
-    }
 });
