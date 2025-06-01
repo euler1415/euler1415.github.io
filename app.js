@@ -7,7 +7,7 @@ import { Timestamp, getFirestore, collection, addDoc, query, getDocs } from "htt
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDPN5czgwm9NPwVG2yu_KNKk63Ggqko5uc",
+    apiKey: "AIzaSyDPN5czGwm9NPwVG2yu_KNKk63Ggqko5uc",
     authDomain: "webpage-ccd22.firebaseapp.com",
     projectId: "webpage-ccd22",
     storageBucket: "webpage-ccd22.firebasestorage.app",
@@ -22,7 +22,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app); // Keep this if you want analytics, otherwise remove.
 
 // 1. Initialize Firestore with the app instance
-const db = getFirestore(app); 
+const db = getFirestore(app);
 console.log(`db ${db}`)
 
 // Reference to the fireworks instance (will be initialized in DOMContentLoaded)
@@ -49,9 +49,9 @@ async function writeNewMessage(username, messageText) {
         const docRef = await addDoc(messagesCollection, {
             text: messageText,
             timestamp: Timestamp.now(), // Using client-side timestamp for immediate display consistency
-                                       // For true server timestamp, you'd use FieldValue.serverTimestamp()
-                                       // but that requires an extra import and often a read back.
-                                       // For this demo, client-side is fine for display.
+                                        // For true server timestamp, you'd use FieldValue.serverTimestamp()
+                                        // but that requires an extra import and often a read back.
+                                        // For this demo, client-side is fine for display.
             username: username,
         });
 
@@ -103,15 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAndUpdateViewCount();
 
     // --- Chat Room Functions ---
-    function getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
     function displayMessage(user, message, timestamp) {
         const messageElement = document.createElement('div');
-        const timeString = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
+        let timeString = '';
+        if (timestamp) {
+            const date = new Date(timestamp);
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            timeString = date.toLocaleDateString(undefined, options);
+        }
         messageElement.innerHTML = `${timeString ? `<span class="timestamp">[${timeString}]</span> ` : ''}<strong>${user}:</strong> ${message}`;
         chatMessagesElement.appendChild(messageElement);
         chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
@@ -121,30 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const messages = await readAll();
             // Sort messages by timestamp to display them in chronological order
-            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)); 
-            
+            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
             messages.forEach(msg => {
                 displayMessage(msg.username, msg.text, msg.timestamp);
             });
-            displayMessage('System', 'Chat connected.');
-
-            // Add the previous hardcoded messages for historical context if desired
-            displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
-                                     Date.now() - 3600 * 3 - getRandomInt(900, 1800)
-                                     );
-            displayMessage('Gauss430', 'wut is this',
-                                     Date.now() - 3600 * 2 - getRandomInt(900, 1800)
-                                     );
-            displayMessage('euler1415', 'This is MY website.',
-                                     Date.now() - 3600 * 1 - getRandomInt(900, 1800)
-                                     );
-            displayMessage('euler1415', 'This chat might not work sometimes.',
-                                     Date.now() - getRandomInt(900, 1800)
-                                     );
-
         } catch (error) {
             console.error("Error loading initial messages:", error);
-            displayMessage('System', 'Could not load previous messages.');
+            // No message displayed for system errors, as requested
         }
     }
 
@@ -153,9 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageText = chatInputElement.value.trim();
         if (messageText) {
             // Optimistic update: display your own message immediately
-            displayMessage('You', messageText, Date.now()); 
+            displayMessage('Anonymous', messageText, Date.now());
             // Send to Firestore
-            writeNewMessage('You', messageText); 
+            writeNewMessage('Anonymous', messageText);
             chatInputElement.value = '';
         }
     });
@@ -186,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.body.appendChild(fireworksContainer);
     }
-    
 
     // Initialize fireworks after the container is in the DOM
     fireworks = new Fireworks.default(fireworksContainer, {
