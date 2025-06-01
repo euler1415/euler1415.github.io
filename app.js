@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-import { serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"; // This import is for Realtime Database's serverTimestamp.
-// For Firestore's serverTimestamp, you need to import it from firestore:
+import { serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
 import { Timestamp, getFirestore, collection, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 
@@ -19,7 +18,7 @@ const firebaseConfig = {
 // Initialize Firebase
 console.log(firebaseConfig)
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app); // Keep this if you want analytics, otherwise remove.
+const analytics = getAnalytics(app);
 
 // 1. Initialize Firestore with the app instance
 const db = getFirestore(app);
@@ -30,11 +29,11 @@ let fireworks;
 
 // Function to trigger the fireworks animation
 function triggerFireworks() {
-    if (fireworks) { // Ensure fireworks object exists
+    if (fireworks) {
         fireworks.start();
         setTimeout(() => {
             fireworks.stop();
-        }, 3000); // Stop fireworks after 3 seconds
+        }, 3000);
     } else {
         console.warn("Fireworks object not initialized yet.");
     }
@@ -45,18 +44,14 @@ async function writeNewMessage(username, messageText) {
     try {
         const messagesCollection = collection(db, "messages");
 
-        // Use Firestore's FieldValue.serverTimestamp()
         const docRef = await addDoc(messagesCollection, {
             text: messageText,
-            timestamp: Timestamp.now(), // Using client-side timestamp for immediate display consistency
-                                        // For true server timestamp, you'd use FieldValue.serverTimestamp()
-                                        // but that requires an extra import and often a read back.
-                                        // For this demo, client-side is fine for display.
+            timestamp: Timestamp.now(),
             username: username,
         });
 
         console.log("Document written with ID: ", docRef.id);
-        triggerFireworks(); // Trigger fireworks on successful message write
+        triggerFireworks();
     } catch (e) {
         console.error("Error adding document: ", e);
     }
@@ -64,12 +59,11 @@ async function writeNewMessage(username, messageText) {
 
 async function readAll() {
     const messagesCollectionRef = collection(db, "messages");
-    const q = query(messagesCollectionRef); // No need for 'where' clause for all documents
+    const q = query(messagesCollectionRef);
 
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
         const data = doc.data();
-        // Convert Firestore Timestamp to JavaScript Date object's milliseconds
         if (data.timestamp && typeof data.timestamp.toDate === 'function') {
             data.timestamp = data.timestamp.toDate().getTime();
         }
@@ -119,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadInitialMessages() {
         try {
             const messages = await readAll();
-            // Sort messages by timestamp to display them in chronological order
             messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
             messages.forEach(msg => {
@@ -127,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error("Error loading initial messages:", error);
-            // No message displayed for system errors, as requested
         }
     }
 
@@ -135,9 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButtonElement.addEventListener('click', () => {
         const messageText = chatInputElement.value.trim();
         if (messageText) {
-            // Optimistic update: display your own message immediately
             displayMessage('Anonymous', messageText, Date.now());
-            // Send to Firestore
             writeNewMessage('Anonymous', messageText);
             chatInputElement.value = '';
         }
@@ -153,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadInitialMessages();
 
     // --- Firework Animation Setup ---
-    // Create a container for the fireworks if it doesn't already exist
     let fireworksContainer = document.getElementById('fireworks-container');
     if (!fireworksContainer) {
         fireworksContainer = document.createElement('div');
@@ -164,13 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
             left: 0,
             width: '100%',
             height: '100%',
-            zIndex: 9999, // Ensure it's on top
-            pointerEvents: 'none' // Allows clicking through the container
+            zIndex: 9999,
+            pointerEvents: 'none'
         });
         document.body.appendChild(fireworksContainer);
     }
 
-    // Initialize fireworks after the container is in the DOM
     fireworks = new Fireworks.default(fireworksContainer, {
         autoresize: true,
         opacity: 0.5,
@@ -191,4 +179,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ===========================================
+    // ======== JAVASCRIPT GAME ADDITION =========
+    // ===========================================
+
+    // Get game elements
+    const guessGameContainer = document.getElementById('guess-game-container');
+    if (guessGameContainer) { // Only run game logic if the container exists
+        const guessInput = document.getElementById('guess-input');
+        const guessButton = document.getElementById('guess-button');
+        const guessMessage = document.getElementById('guess-message');
+        const restartButton = document.getElementById('restart-game-button');
+
+        let secretNumber;
+        let attempts;
+        const maxAttempts = 5; // You can adjust this
+
+        function startGame() {
+            secretNumber = Math.floor(Math.random() * 20) + 1; // Number between 1 and 20
+            attempts = 0;
+            guessMessage.textContent = 'Guess a number between 1 and 20!';
+            guessInput.value = '';
+            guessInput.disabled = false;
+            guessButton.disabled = false;
+            restartButton.style.display = 'none'; // Hide restart button initially
+        }
+
+        function checkGuess() {
+            const userGuess = parseInt(guessInput.value);
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 20) {
+                guessMessage.textContent = 'Please enter a valid number between 1 and 20.';
+                return;
+            }
+
+            attempts++;
+
+            if (userGuess === secretNumber) {
+                guessMessage.textContent = `Congratulations! You guessed the number ${secretNumber} in ${attempts} attempts!`;
+                guessInput.disabled = true;
+                guessButton.disabled = true;
+                restartButton.style.display = 'block'; // Show restart button
+                triggerFireworks(); // Optional: Trigger fireworks on win
+            } else if (userGuess < secretNumber) {
+                guessMessage.textContent = `Too low! Attempts left: ${maxAttempts - attempts}`;
+            } else {
+                guessMessage.textContent = `Too high! Attempts left: ${maxAttempts - attempts}`;
+            }
+
+            if (attempts >= maxAttempts && userGuess !== secretNumber) {
+                guessMessage.textContent = `Game Over! You ran out of attempts. The number was ${secretNumber}.`;
+                guessInput.disabled = true;
+                guessButton.disabled = true;
+                restartButton.style.display = 'block'; // Show restart button
+            }
+            guessInput.value = ''; // Clear input after guess
+        }
+
+        // Event listeners for the game
+        if (guessButton) {
+            guessButton.addEventListener('click', checkGuess);
+        }
+        if (guessInput) {
+            guessInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    checkGuess();
+                }
+            });
+        }
+        if (restartButton) {
+            restartButton.addEventListener('click', startGame);
+        }
+
+        // Start the game when the page loads
+        startGame();
+    }
 });
