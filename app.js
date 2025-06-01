@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             isRolling = false;
             console.log("Barrel roll sequence finished. isRolling set to false.");
-        }, 700); // This duration MUST match the CSS animation-duration (0.7s)
+        }, 2000); // This duration MUST match the CSS animation-duration (0.7s)
     }
     // --- End Barrel Roll Functionality ---
 
