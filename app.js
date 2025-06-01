@@ -46,7 +46,7 @@ async function writeNewMessage(username, messageText) {
         });
         console.log("Document written with ID: ", docRef.id);
         // Do not trigger fireworks for the "barrel roll" command itself
-        if (messageText.toLowerCase() !== 'barrel roll') {
+        if (messageText.toLowerCase() !== 'barrel roll') { // Only trigger fireworks if it's not the barrel roll command
             triggerFireworks();
         }
     } catch (e) {
@@ -62,7 +62,7 @@ async function readAll() {
     return snapshot.docs.map(doc => {
         const data = doc.data();
         if (data.timestamp && typeof data.timestamp.toDate === 'function') {
-            data.timestamp = data.timestamp.toDate().getTime(); // Convert Firestore Timestamp
+            data.timestamp = data.timestamp.toDate().getTime(); // Convert Firestore Timestamp to milliseconds
         }
         return data;
     });
@@ -78,10 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!chatInputElement) console.error("Chat input element (chat-input) not found!");
     if (!sendButtonElement) console.error("Send button element (send-button) not found!");
+    if (!chatMessagesElement) console.error("Chat messages element (chat-messages) not found!");
 
     // --- Barrel Roll Functionality ---
-    // The addBarrelRollStyles() function is removed as styles are now in the main CSS file.
-
     let isRolling = false; // Flag to prevent multiple concurrent barrel rolls
 
     function doBarrelRoll() {
@@ -102,14 +101,17 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('barrel-roll-effect'); // CSS class from your stylesheet applies the animation
         console.log("Added 'barrel-roll-effect' class to body. New classes:", body.className);
         
+        // The duration here (700ms) MUST match the animation duration in your CSS (0.7s)
         setTimeout(() => {
             body.classList.remove('barrel-roll-effect');
-            body.style.transform = ''; // Clears any inline transform style, allowing class to work next time
-            console.log("Removed 'barrel-roll-effect' class and cleared body.style.transform.");
+            // It's generally not necessary to reset transform here if the animation uses `forwards` and
+            // you're only relying on the class to apply the transform.
+            // body.style.transform = ''; // Keep this if you find lingering transform issues
+            console.log("Removed 'barrel-roll-effect' class.");
             
             isRolling = false;
             console.log("Barrel roll sequence finished. isRolling set to false.");
-        }, 700); // This duration MUST match the CSS transition-duration (0.7s = 700ms)
+        }, 700); // This duration MUST match the CSS animation-duration (0.7s)
     }
     // --- End Barrel Roll Functionality ---
 
@@ -175,14 +177,18 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`Message text entered: "${messageText}"`);
 
             if (messageText) {
-                // Check for "barrel roll" command (case-insensitive)
+                // Check for "barrel roll" command (case-insensitive) BEFORE sending to Firestore
                 if (messageText.toLowerCase() === 'barrel roll') {
                     console.log("'barrel roll' command detected.");
                     doBarrelRoll();
+                    // Optionally, you might display a message like "Barrel roll initiated!" in chat
+                    displayMessage('System', 'Barrel roll initiated!', Date.now());
+                } else {
+                    // Display your own message immediately (optimistic update)
+                    displayMessage('Anonymous', messageText, Date.now());
                 }
-                // Optimistic update: display your own message immediately
-                displayMessage('Anonymous', messageText, Date.now());
-                // Send to Firestore
+                
+                // Always send the message to Firestore, even if it's 'barrel roll'
                 writeNewMessage('Anonymous', messageText);
                 chatInputElement.value = ''; // Clear input after processing
             } else {
@@ -290,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     guessMessage.textContent = `Game Over! You ran out of attempts. The number was ${secretNumber}.`;
                     guessMessage.style.color = 'darkred'; // Indicate game over
                     guessInput.disabled = true;
-                    guessButton.disabled = true; // Corrected typo from disabled_true
+                    guessButton.disabled = true;
                     restartButton.style.display = 'block';
                 }
                 guessInput.value = ''; // Clear input after guess
