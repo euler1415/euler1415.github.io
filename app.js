@@ -153,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageText = chatInputElement.value.trim();
         if (messageText) {
             // Optimistic update: display your own message immediately
-            displayMessage('You', messageText, Date.now()); 
+            displayMessage('Anonymous', messageText, Date.now()); 
             // Send to Firestore
-            writeNewMessage('You', messageText); 
+            writeNewMessage('Anonymous', messageText); 
             chatInputElement.value = '';
         }
     });
