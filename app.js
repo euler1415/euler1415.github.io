@@ -1,5 +1,3 @@
-
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -39,6 +37,8 @@ async function writeNewMessage(username, messageText) {
         });
 
         console.log("Document written with ID: ", docRef.id);
+        // Trigger fireworks on successful message write
+        triggerFireworks();
     } catch (e) {
         console.error("Error adding document: ", e);
     }
@@ -125,17 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage('System', 'Chat connected.');
             
             displayMessage('euler1415', 'Hello, I hope you have a lot of fun on this website!!!',
-                          Date.now() - 3600 * 3 - getRandomInt(900, 1800)
-                          );
+                                     Date.now() - 3600 * 3 - getRandomInt(900, 1800)
+                                     );
             displayMessage('Gauss430', 'wut is this',
-                          Date.now() - 3600 * 2 - getRandomInt(900, 1800)
-                          );
+                                     Date.now() - 3600 * 2 - getRandomInt(900, 1800)
+                                     );
             displayMessage('euler1415', 'This is MY website.',
-                          Date.now() - 3600 * 1 - getRandomInt(900, 1800)
-                          );
+                                     Date.now() - 3600 * 1 - getRandomInt(900, 1800)
+                                     );
             displayMessage('euler1415', 'This chat might not work sometimes.',
-                          Date.now() - getRandomInt(900, 1800)
-                          );
+                                     Date.now() - getRandomInt(900, 1800)
+                                     );
             // --- END SIMULATION ---
 
         } catch (error) {
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // **3. Listen for new messages from the server**
     // Example with Socket.IO:
     // socket.on('newMessage', (data) => { // 'newMessage' is a custom event name
-    //     displayMessage(data.user, data.text, data.timestamp);
+    //       displayMessage(data.user, data.text, data.timestamp);
     // });
 
     // --- SIMULATED INCOMING MESSAGE (Replace with actual WebSocket/listener) ---
@@ -195,4 +195,45 @@ document.addEventListener('DOMContentLoaded', () => {
     loadInitialMessages();
     // simulateIncomingMessage(); // Start listening for simulated messages
 
+    // --- Firework Animation Setup ---
+    // Create a container for the fireworks
+    const fireworksContainer = document.createElement('div');
+    fireworksContainer.id = 'fireworks-container';
+    Object.assign(fireworksContainer.style, {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 9999, // Ensure it's on top
+        pointerEvents: 'none' // Allows clicking through the container
+    });
+    document.body.appendChild(fireworksContainer);
+
+    const fireworks = new Fireworks.default(fireworksContainer, {
+        autoresize: true,
+        opacity: 0.5,
+        acceleration: 1.05,
+        friction: 0.97,
+        gravity: 1.5,
+        particles: 50,
+        trace: 3,
+        traceSpeed: 10,
+        explode: 5,
+        mouse: {
+            click: false,
+            move: false,
+            max: 1
+        },
+        sound: {
+            enabled: false,
+        }
+    });
+
+    function triggerFireworks() {
+        fireworks.start();
+        setTimeout(() => {
+            fireworks.stop();
+        }, 3000); // Stop fireworks after 3 seconds
+    }
 });
