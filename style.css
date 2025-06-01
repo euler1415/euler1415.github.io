@@ -25,7 +25,7 @@ main {
     margin: 20px auto; /* Center the main content area */
     background-color: #fff; /* Give main a background for better separation */
     border-radius: 8px; /* Rounded corners for the main content block */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Stronger shadow for the main block */
+    box-shadow: 0 2px 8px rgba(255,255,255,0.1); /* Stronger shadow for the main block */
 }
 
 section {
