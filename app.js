@@ -104,11 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // The duration here (700ms) MUST match the animation duration in your CSS (0.7s)
         setTimeout(() => {
             body.classList.remove('barrel-roll-effect');
-            // It's generally not necessary to reset transform here if the animation uses `forwards` and
-            // you're only relying on the class to apply the transform.
-            // body.style.transform = ''; // Keep this if you find lingering transform issues
             console.log("Removed 'barrel-roll-effect' class.");
-
             isRolling = false;
             console.log("Barrel roll sequence finished. isRolling set to false.");
         }, 2000); // This duration MUST match the CSS animation-duration (0.7s)
@@ -316,40 +312,86 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Tower of Hanoi Animation ---
-    const tohContainer = document.getElementById('toh-container');
-    const tohPoles = document.querySelectorAll('.toh-pole');
+    const tohPoles = [
+        document.getElementById('toh-pole-1'),
+        document.getElementById('toh-pole-2'),
+        document.getElementById('toh-pole-3')
+    ];
     const tohStartButton = document.getElementById('toh-start-button');
     let disks = [];
-    const numDisks = 3; // You can change the number of disks
+    const numDisks = 3; // You can change the number of disks for the puzzle
+    const animationSpeed = 500; // Milliseconds per move
 
     function createDisks() {
+        // Clear existing disks from all poles
+        tohPoles.forEach(pole => pole.innerHTML = '');
+        disks = [];
         for (let i = numDisks; i > 0; i--) {
             const disk = document.createElement('div');
             disk.classList.add('toh-disk');
-            disk.textContent = i;
-            disk.style.width = `${50 + (i - 1) * 20}px`; // Adjust disk width
+            disk.textContent = i; // Display disk number
+            disk.style.width = `${50 + (i - 1) * 20}px`; // Larger disks are wider
             disk.dataset.size = i;
             disks.push(disk);
-            tohPoles[0].appendChild(disk); // Add to the first pole
+            tohPoles[0].appendChild(disk); // Add all disks to the first pole
         }
     }
 
-    function resetDisks() {
-        tohPoles.forEach(pole => pole.innerHTML = '');
-        disks = [];
-        createDisks();
-    }
+    // Initialize disks when DOM content is loaded
+    createDisks();
 
-    function moveDisk(fromPole, toPole) {
-        const disk = fromPole.lastElementChild;
-        if (!disk) return false; // No disk to move
+    // Async function to simulate disk movement with a delay
+    async function animateMove(fromPoleIndex, toPoleIndex) {
+        const fromPole = tohPoles[fromPoleIndex];
+        const toPole = tohPoles[toPoleIndex];
+        const diskToMove = fromPole.lastElementChild;
+
+        if (!diskToMove) {
+            console.error(`No disk on pole ${fromPoleIndex + 1} to move.`);
+            return false;
+        }
 
         const toDisk = toPole.lastElementChild;
-        if (toDisk && parseInt(disk.dataset.size) > parseInt(toDisk.dataset.size)) return false; // Invalid move
+        if (toDisk && parseInt(diskToMove.dataset.size) > parseInt(toDisk.dataset.size)) {
+            console.warn(`Invalid move: Disk ${diskToMove.dataset.size} cannot be placed on disk ${toDisk.dataset.size}.`);
+            return false;
+        }
 
-        toPole.appendChild(disk);
+        // Visual animation steps
+        // 1. Lift the disk
+        diskToMove.style.transform = `translateY(-${tohContainer.offsetHeight - (diskToMove.offsetHeight * (fromPole.children.length - 1))}px)`;
+        await new Promise(resolve => setTimeout(resolve, animationSpeed / 2)); // Move up quickly
+
+        // 2. Move horizontally
+        const fromRect = fromPole.getBoundingClientRect();
+        const toRect = toPole.getBoundingClientRect();
+        const horizontalDistance = toRect.left - fromRect.left;
+        diskToMove.style.transform = `translateY(-${tohContainer.offsetHeight - (diskToMove.offsetHeight * (fromPole.children.length - 1))}px) translateX(${horizontalDistance}px)`;
+        await new Promise(resolve => setTimeout(resolve, animationSpeed / 2)); // Move horizontally
+
+        // 3. Drop the disk onto the new pole
+        toPole.appendChild(diskToMove); // Actually move the DOM element
+        diskToMove.style.transform = 'translateY(0) translateX(0)'; // Reset transform for correct stacking
+        await new Promise(resolve => setTimeout(resolve, animationSpeed)); // Drop slowly
+
         return true;
     }
 
-    function solveHanoi(n, source, destination, auxiliary) {
-        if (n > 0) {
+    // Recursive Tower of Hanoi solver
+    async function solveHanoi(n, source, destination, auxiliary) {
+        if (n === 0) {
+            return;
+        }
+
+        await solveHanoi(n - 1, source, auxiliary, destination); // Move n-1 disks from source to auxiliary
+        await animateMove(source, destination); // Move the nth disk from source to destination
+        await solveHanoi(n - 1, auxiliary, destination, source); // Move n-1 disks from auxiliary to destination
+    }
+
+    tohStartButton.addEventListener('click', async () => {
+        tohStartButton.disabled = true; // Disable button during animation
+        createDisks(); // Reset and create disks for a fresh start
+        await solveHanoi(numDisks, 0, 2, 1); // Solve for numDisks from pole 0 to pole 2, using pole 1 as auxiliary
+        tohStartButton.disabled = false; // Re-enable button after animation
+    });
+});
