@@ -1,27 +1,30 @@
 /* --- Barrel Roll Effect --- */
 .barrel-roll-effect {
-  /* This ensures that transitions apply correctly to the whole body */
-  transition: transform 2.0s ease-in-out;
-  animation: doBarrelRoll 2.0s ease-in-out forwards;
+    /* This ensures that transitions apply correctly to the whole body */
+    transition: transform 2.0s ease-in-out;
+    animation: doBarrelRoll 2.0s ease-in-out forwards;
 }
 
 @keyframes doBarrelRoll {
-  0% {
-    transform: rotateZ(0deg);
-  }
-  100% {
-    transform: rotateZ(360deg);
-  }
+    0% {
+        transform: rotateZ(0deg);
+    }
+
+    100% {
+        transform: rotateZ(360deg);
+    }
 }
 /* --- End Barrel Roll Effect --- */
 
 body {
-    font-family: 'Montserrat Alternates', sans-serif; /* Changed font */
+    font-family: 'Montserrat Alternates', sans-serif;
+    /* Changed font */
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
-    line-height: 1.6; /* Improves readability */
+    line-height: 1.6;
+    /* Improves readability */
 }
 
 header {
@@ -29,32 +32,42 @@ header {
     color: #fff;
     padding: 1em 0;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(255,255,255,0.1); /* Subtle shadow */
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+    /* Subtle shadow */
 }
 
 header h1 {
-    margin-bottom: 5px; /* Adjust spacing below the main title */
+    margin-bottom: 5px;
+    /* Adjust spacing below the main title */
 }
 
 main {
     padding: 20px;
-    max-width: 960px; /* Max width for content to prevent it from stretching too wide */
-    margin: 20px auto; /* Center the main content area */
-    background-color: #fff; /* Give main a background for better separation */
-    border-radius: 8px; /* Rounded corners for the main content block */
-    box-shadow: 0 2px 8px rgba(255,255,255,0.1); /* Stronger shadow for the main block */
+    max-width: 960px;
+    /* Max width for content to prevent it from stretching too wide */
+    margin: 20px auto;
+    /* Center the main content area */
+    background-color: #fff;
+    /* Give main a background for better separation */
+    border-radius: 8px;
+    /* Rounded corners for the main content block */
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+    /* Stronger shadow for the main block */
 }
 
 section {
-    margin-bottom: 40px; /* More space between sections */
+    margin-bottom: 40px;
+    /* More space between sections */
     padding: 20px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: #fcfcfc;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-main h1, h2, h3 {
+main h1,
+h2,
+h3 {
     color: #222;
     margin-top: 0;
     margin-bottom: 15px;
@@ -76,24 +89,31 @@ main h1, h2, h3 {
 }
 
 #chat-messages {
-    height: 250px; /* Slightly increased height for more messages */
+    height: 250px;
+    /* Slightly increased height for more messages */
     border: 1px solid #eee;
     margin-bottom: 10px;
-    overflow-y: auto; /* 'auto' is generally better than 'scroll' */
+    overflow-y: auto;
+    /* 'auto' is generally better than 'scroll' */
     padding: 10px;
-    background-color: #f9f9f9; /* Light background for chat area */
+    background-color: #f9f9f9;
+    /* Light background for chat area */
     border-radius: 5px;
 }
 
 #chat-messages div {
-    padding: 8px; /* More padding for messages */
-    margin-bottom: 8px; /* More space between messages */
+    padding: 8px;
+    /* More padding for messages */
+    margin-bottom: 8px;
+    /* More space between messages */
     border-bottom: 1px dotted #eee;
-    word-wrap: break-word; /* Prevents long words from breaking layout */
+    word-wrap: break-word;
+    /* Prevents long words from breaking layout */
 }
 
 #chat-messages div:last-child {
-    border-bottom: none; /* No border for the last message */
+    border-bottom: none;
+    /* No border for the last message */
 }
 
 .timestamp {
@@ -103,27 +123,34 @@ main h1, h2, h3 {
 }
 
 #chat-input {
-    width: calc(100% - 105px); /* Adjusted width for input to accommodate button */
+    width: calc(100% - 105px);
+    /* Adjusted width for input to accommodate button */
     padding: 10px;
     margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    box-sizing: border-box;
+    /* Ensures padding and border are included in the width */
 }
 
 #send-button {
-    padding: 10px 18px; /* Larger padding for button */
-    background-color: #007bff; /* Changed to a standard blue */
+    padding: 10px 18px;
+    /* Larger padding for button */
+    background-color: #007bff;
+    /* Changed to a standard blue */
     color: white;
     border: none;
-    border-radius: 5px; /* Rounded corners for buttons */
+    border-radius: 5px;
+    /* Rounded corners for buttons */
     cursor: pointer;
     font-size: 1em;
-    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    transition: background-color 0.3s ease;
+    /* Smooth transition on hover */
 }
 
 #send-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
+    /* Darker blue on hover */
 }
 
 ---
@@ -131,81 +158,103 @@ main h1, h2, h3 {
 /* Guess Game Styling */
 #guess-game-container {
     /* Inherits styles from 'section' */
-    text-align: center; /* Center content within the game box */
-    max-width: 500px; /* Max width for the game container */
-    margin-left: auto; /* Center the game box horizontally */
+    text-align: center;
+    /* Center content within the game box */
+    max-width: 500px;
+    /* Max width for the game container */
+    margin-left: auto;
+    /* Center the game box horizontally */
     margin-right: auto;
-    background-color: #eff6ff; /* Light blue background for game section */
-    border-color: #a7d0ff; /* Blue border */
+    background-color: #eff6ff;
+    /* Light blue background for game section */
+    border-color: #a7d0ff;
+    /* Blue border */
 }
 
 #guess-input {
     padding: 10px;
     margin-right: 10px;
-    border: 1px solid #a7d0ff; /* Blue border for input */
+    border: 1px solid #a7d0ff;
+    /* Blue border for input */
     border-radius: 5px;
     width: 150px;
     box-sizing: border-box;
     font-size: 1em;
 }
 
-#guess-button, #restart-game-button {
+#guess-button,
+#restart-game-button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #28a745; /* Green for game buttons */
+    background-color: #28a745;
+    /* Green for game buttons */
     color: white;
     cursor: pointer;
     font-size: 1em;
     transition: background-color 0.3s ease;
-    margin: 5px; /* Add some margin around buttons */
+    margin: 5px;
+    /* Add some margin around buttons */
 }
 
-#guess-button:hover, #restart-game-button:hover {
-    background-color: #218838; /* Darker green on hover */
+#guess-button:hover,
+#restart-game-button:hover {
+    background-color: #218838;
+    /* Darker green on hover */
 }
 
 #guess-message {
     margin: 15px 0;
     font-weight: bold;
-    color: #0056b3; /* Blue for game messages */
-    min-height: 20px; /* Reserve space to prevent layout shifts */
+    color: #0056b3;
+    /* Blue for game messages */
+    min-height: 20px;
+    /* Reserve space to prevent layout shifts */
 }
 
 #restart-game-button {
-    background-color: #ffc107; /* Yellow for restart (can be changed) */
+    background-color: #ffc107;
+    /* Yellow for restart (can be changed) */
     color: #333;
 }
 
 #restart-game-button:hover {
-    background-color: #e0a800; /* Darker yellow on hover */
+    background-color: #e0a800;
+    /* Darker yellow on hover */
 }
 
 ---
 
 /* Rubik's Cube and LaTeX Sections */
 #rubiks-cube img {
-    max-width: 100%; /* Ensures images scale down on smaller screens */
+    max-width: 100%;
+    /* Ensures images scale down on smaller screens */
     height: auto;
-    display: block; /* Removes extra space below image */
-    margin: 20px auto; /* Center images and add vertical spacing */
+    display: block;
+    /* Removes extra space below image */
+    margin: 20px auto;
+    /* Center images and add vertical spacing */
     border: 1px solid #e0e0e0;
     border-radius: 5px;
 }
 
 #latex a {
-    display: block; /* Make each 'a' tag a block element for better spacing */
+    display: block;
+    /* Make each 'a' tag a block element for better spacing */
     margin-bottom: 10px;
     font-size: 1.1em;
     color: #444;
-    background-color: #e9f0ff; /* Light blue background for latex tips */
+    background-color: #e9f0ff;
+    /* Light blue background for latex tips */
     padding: 10px;
-    border-left: 5px solid #007bff; /* Blue left border */
+    border-left: 5px solid #007bff;
+    /* Blue left border */
     border-radius: 0 5px 5px 0;
 }
 
 #latex ul {
-    list-style-type: disc; /* Default bullet points */
+    list-style-type: disc;
+    /* Default bullet points */
     padding-left: 20px;
 }
 
@@ -223,8 +272,9 @@ footer {
     color: #fff;
     /* Removed fixed positioning, as it can interfere with long content. */
     /* If you want it fixed, ensure main content has enough bottom padding to clear it. */
-    margin-top: 40px; /* Space above footer */
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    margin-top: 40px;
+    /* Space above footer */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -237,7 +287,8 @@ footer {
 
 .blink-css {
     animation: blinker 1s linear infinite;
-    font-weight: bold; /* Make blinking text stand out more */
+    font-weight: bold;
+    /* Make blinking text stand out more */
 }
 
 /* Responsive Design (Basic) */
@@ -252,17 +303,69 @@ footer {
     }
 
     #chat-input {
-        width: calc(100% - 90px); /* Adjust input width for smaller screens */
+        width: calc(100% - 90px);
+        /* Adjust input width for smaller screens */
     }
 
     #guess-input {
-        width: 100%; /* Full width on smaller screens */
+        width: 100%;
+        /* Full width on smaller screens */
         margin-right: 0;
         margin-bottom: 10px;
     }
 
-    #guess-button, #restart-game-button {
-        width: calc(50% - 10px); /* Two buttons side-by-side */
+    #guess-button,
+    #restart-game-button {
+        width: calc(50% - 10px);
+        /* Two buttons side-by-side */
         margin: 5px;
     }
+}
+
+/* Tower of Hanoi Styling */
+#toh-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 200px;
+    /* Adjust as needed */
+    margin-top: 20px;
+    position: relative;
+}
+
+.toh-pole {
+    width: 10px;
+    height: 100%;
+    background-color: #333;
+    /* Pole color */
+    position: relative;
+}
+
+.toh-disk {
+    position: absolute;
+    bottom: 0;
+    height: 20px;
+    /* Disk height */
+    background-color: #007bff;
+    /* Disk color */
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    line-height: 20px;
+}
+
+#toh-start-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+#toh-start-button:hover {
+    background-color: #218838;
 }
