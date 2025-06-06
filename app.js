@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isRolling = true;
         body.classList.add('barrel-roll-effect'); // CSS class from your stylesheet applies the animation
         console.log("Added 'barrel-roll-effect' class to body. New classes:", body.className);
-        
+
         // The duration here (700ms) MUST match the animation duration in your CSS (0.7s)
         setTimeout(() => {
             body.classList.remove('barrel-roll-effect');
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // you're only relying on the class to apply the transform.
             // body.style.transform = ''; // Keep this if you find lingering transform issues
             console.log("Removed 'barrel-roll-effect' class.");
-            
+
             isRolling = false;
             console.log("Barrel roll sequence finished. isRolling set to false.");
         }, 2000); // This duration MUST match the CSS animation-duration (0.7s)
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Display your own message immediately (optimistic update)
                     displayMessage('Anonymous', messageText, Date.now());
                 }
-                
+
                 // Always send the message to Firestore, even if it's 'barrel roll'
                 writeNewMessage('Anonymous', messageText);
                 chatInputElement.value = ''; // Clear input after processing
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fireworks = new Fireworks.default(fireworksContainer, {
             autoresize: true, opacity: 0.5, acceleration: 1.05, friction: 0.97,
             gravity: 1.5, particles: 50, trace: 3, traceSpeed: 10,
-            explode: 5, 
+            explode: 5,
             mouse: { click: false, move: false, max: 1 },
             sound: { enabled: false }
         });
@@ -314,4 +314,42 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log("guess-game-container not found. Game not initialized.");
     }
-});
+
+    // --- Tower of Hanoi Animation ---
+    const tohContainer = document.getElementById('toh-container');
+    const tohPoles = document.querySelectorAll('.toh-pole');
+    const tohStartButton = document.getElementById('toh-start-button');
+    let disks = [];
+    const numDisks = 3; // You can change the number of disks
+
+    function createDisks() {
+        for (let i = numDisks; i > 0; i--) {
+            const disk = document.createElement('div');
+            disk.classList.add('toh-disk');
+            disk.textContent = i;
+            disk.style.width = `${50 + (i - 1) * 20}px`; // Adjust disk width
+            disk.dataset.size = i;
+            disks.push(disk);
+            tohPoles[0].appendChild(disk); // Add to the first pole
+        }
+    }
+
+    function resetDisks() {
+        tohPoles.forEach(pole => pole.innerHTML = '');
+        disks = [];
+        createDisks();
+    }
+
+    function moveDisk(fromPole, toPole) {
+        const disk = fromPole.lastElementChild;
+        if (!disk) return false; // No disk to move
+
+        const toDisk = toPole.lastElementChild;
+        if (toDisk && parseInt(disk.dataset.size) > parseInt(toDisk.dataset.size)) return false; // Invalid move
+
+        toPole.appendChild(disk);
+        return true;
+    }
+
+    function solveHanoi(n, source, destination, auxiliary) {
+        if (n > 0) {
